@@ -16,7 +16,10 @@ export class RelayDurableObject {
       if (typeof data === "string") {
         if (data === "camera_sender") {
           this.camSender = server;
-          if (this.camViewer) this.camViewer.send("sender_online");
+          if (this.camViewer) {
+            this.camViewer.send("sender_online");
+            server.send("viewer_online");
+          }
         } else if (data === "camera_viewer") {
           this.camViewer = server;
           if (this.camSender) {
@@ -27,7 +30,10 @@ export class RelayDurableObject {
           }
         } else if (data === "screen_sender") {
           this.scrSender = server;
-          if (this.scrViewer) this.scrViewer.send("sender_online");
+          if (this.scrViewer) {
+            this.scrViewer.send("sender_online");
+            server.send("viewer_online");
+          }
         } else if (data === "screen_viewer") {
           this.scrViewer = server;
           if (this.scrSender) {
@@ -40,7 +46,8 @@ export class RelayDurableObject {
           server.send("pong");
         }
       } else {
-        const target = (server === this.camSender) ? this.camViewer : (server === this.scrSender) ? this.scrViewer : null;
+        const target = (server === this.camSender) ? this.camViewer
+                     : (server === this.scrSender) ? this.scrViewer : null;
         if (target && target.readyState === 1) target.send(data);
       }
     });
